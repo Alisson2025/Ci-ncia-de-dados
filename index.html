@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Painel interativo para análise exploratória de dados com estatísticas e gráficos.">
+  <title>Meu Painel de Dados | Análise Exploratória</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">D</div>
+        <div><strong>DataLab</strong><span>PAINEL DE ANÁLISE</span></div>
+      </div>
+      <div class="side-label">MENU PRINCIPAL</div>
+      <a class="nav-item active" href="#inicio"><span>▦</span> Visão geral</a>
+      <a class="nav-item" href="#graficos"><span>▥</span> Gráficos</a>
+      <a class="nav-item" href="#estatisticas"><span>∑</span> Estatísticas</a>
+      <a class="nav-item" href="#frequencias"><span>≋</span> Frequências</a>
+      <div class="sidebar-bottom">
+        <div class="tip-card">
+          <div class="tip-icon">✦</div>
+          <strong>Explore seus dados</strong>
+          <p>Transforme respostas em informações e descubra padrões.</p>
+        </div>
+        <span class="sidebar-foot">PROJETO DE CIÊNCIA DE DADOS</span>
+      </div>
+    </aside>
+
+    <main class="main-content" id="inicio">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">CIÊNCIA DE DADOS / PROJETO ESCOLAR</div>
+          <h1>Meu Painel de Dados</h1>
+          <p class="subtitle">Uma visão inteligente sobre os dados da sua pesquisa.</p>
+        </div>
+        <div class="top-actions">
+          <span class="status-dot"></span><span class="status-text">Análise no navegador</span>
+        </div>
+      </header>
+
+      <section class="welcome-row">
+        <div>
+          <h2>Olá, pesquisador(a)! <span>✦</span></h2>
+          <p>Carregue sua planilha CSV para começar a explorar os resultados.</p>
+        </div>
+        <button class="button button-ghost" id="sampleBtn">Usar dados de exemplo</button>
+      </section>
+
+      <section class="upload-panel">
+        <div class="upload-symbol">↑</div>
+        <div class="upload-copy">
+          <strong>Importe os dados da sua pesquisa</strong>
+          <p>Selecione um arquivo .CSV exportado do Google Planilhas.</p>
+          <small>Os dados são processados localmente no seu navegador.</small>
+        </div>
+        <label class="button button-primary" for="csvFile">Selecionar arquivo CSV</label>
+        <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+      </section>
+
+      <div class="data-status" id="dataStatus" role="status">Exibindo dados demonstrativos. Importe seu CSV para analisar sua própria pesquisa.</div>
+
+      <section class="section-heading">
+        <div><div class="eyebrow">RESUMO DA PESQUISA</div><h2>Indicadores principais</h2></div>
+        <div class="select-wrap"><label for="columnSelect">Variável analisada</label><select id="columnSelect"></select></div>
+      </section>
+
+      <section class="kpi-grid" id="estatisticas">
+        <article class="kpi-card"><div class="kpi-top"><span>Total de respostas</span><span class="kpi-icon purple">#</span></div><strong id="kCount">—</strong><small>Registros válidos</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Média</span><span class="kpi-icon green">x̄</span></div><strong id="kMean">—</strong><small>Valor médio</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Mediana</span><span class="kpi-icon blue">½</span></div><strong id="kMedian">—</strong><small>Valor central</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Desvio padrão</span><span class="kpi-icon orange">σ</span></div><strong id="kStd">—</strong><small>Variação dos dados</small></article>
+      </section>
+
+      <section class="chart-grid" id="graficos">
+        <article class="panel chart-panel">
+          <div class="panel-heading"><div><h3>Distribuição dos valores</h3><p>Histograma da variável selecionada</p></div><span class="chart-tag">HISTOGRAMA</span></div>
+          <div class="chart-area"><canvas id="histChart"></canvas></div>
+          <p class="chart-note">Observe em quais intervalos os valores aparecem com maior frequência.</p>
+        </article>
+        <article class="panel chart-panel" id="frequencias">
+          <div class="panel-heading"><div><h3>Respostas mais frequentes</h3><p>Contagem de cada valor registrado</p></div><span class="chart-tag">FREQUÊNCIA</span></div>
+          <div class="chart-area"><canvas id="freqChart"></canvas></div>
+          <p class="chart-note">As barras mais altas representam as respostas que mais se repetem.</p>
+        </article>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><h3>Resumo estatístico</h3><p>Medidas calculadas para a variável selecionada</p></div></div>
+          <div class="stats-table-wrap"><table><tbody id="statsTable"></tbody></table></div>
+        </article>
+        <article class="panel insight-panel">
+          <div class="panel-heading"><div><h3>Detecção de valores extremos</h3><p>Investigação de possíveis outliers pelo método IQR</p></div><span class="alert-icon">!</span></div>
+          <div class="outlier-number" id="outlierCount">0</div>
+          <strong>possíveis valores extremos</strong>
+          <p id="outlierText">Carregue uma tabela para verificar se existem valores muito distantes do padrão.</p>
+          <div class="range-box"><span id="lowerFence">Limite inferior: —</span><span id="upperFence">Limite superior: —</span></div>
+        </article>
+      </section>
+
+      <section class="panel conclusion-panel">
+        <div><div class="eyebrow">INTERPRETAÇÃO</div><h3>O que os dados contam?</h3><p id="autoInsight">Selecione uma variável para gerar um resumo automático dos resultados.</p></div>
+        <div class="conclusion-mark">✧</div>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><h3>Prévia da tabela</h3><p>Visualização das primeiras linhas do arquivo importado</p></div><span class="rows-label" id="rowsLabel">0 linhas</span></div>
+        <div class="table-scroll"><table><thead id="dataHead"></thead><tbody id="dataBody"></tbody></table></div>
+      </section>
+
+      <footer>DataLab · Projeto educacional de análise exploratória de dados <span>Feito para aprender, investigar e descobrir.</span></footer>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
